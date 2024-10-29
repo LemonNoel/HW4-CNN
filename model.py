@@ -7,11 +7,11 @@ class LeNet5(nn.Module):
         self.num_classes = num_classes
         self.use_batch_norm = use_batch_norm
         self.feature = nn.Sequential(
-            nn.Conv2d(3, 6, kernel_size=5, stride=1, padding=2),
+            nn.Conv2d(3, 6, kernel_size=5, stride=1, padding=0),
             nn.BatchNorm2d(6) if self.use_batch_norm else nn.Identity(),
             nn.ReLU(inplace=True),
             nn.AvgPool2d(kernel_size=2, stride=2),
-            nn.Conv2d(6, 16, kernel_size=5, stride=1, padding=2),
+            nn.Conv2d(6, 16, kernel_size=5, stride=1, padding=0),
             nn.BatchNorm2d(16) if self.use_batch_norm else nn.Identity(),
             nn.ReLU(inplace=True),
             nn.AvgPool2d(kernel_size=2, stride=2),
@@ -67,7 +67,7 @@ class ResNet9(nn.Module):
     def forward(self, x):
         x = self.conv1(x)
         x = self.conv2(x) + x
-        x = self.conv3(x) + x
+        x = self.conv3(x) + x.repeat(1, 4, 1, 1)
         x = self.conv4(x) + x
         x = self.classifier(x)
         return x

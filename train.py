@@ -18,13 +18,15 @@ parser.add_argument('--lr', type=float, default=1e-3)
 parser.add_argument('--model_name', type=str, default='LeNet-5', choices=['LeNet-5', 'ResNet-9'])
 parser.add_argument('--num_classes', type=int, default=10)
 parser.add_argument('--save_path', type=str, default='./models')
-parser.add_argument('--use_batch_norm', type=bool, default=False)
+parser.add_argument('--use_batch_norm', action='store_true')
 parser.add_argument('--weight_decay', type=float, default=0)
 
 args = parser.parse_args()
 
 
 if __name__ == '__main__':
+    os.makedirs(args.save_path, exist_ok=True)
+
     train_loader, valid_loader, test_loader = build_cinic_10_dataloader(args.data_path, args.batch_size)
 
     if args.model_name == 'LeNet-5':
@@ -54,7 +56,7 @@ if __name__ == '__main__':
             if iter_id % 10 == 9:
                 avg_loss = train_loss / 10
                 print(
-                    f'[epoch {epoch + 1}/{args.epoch} | iter {iter_id + 1}/{len(train_loader)}], loss: {avg_loss:.3f}'
+                    f'[epoch {epoch + 1}/{args.epochs} | iter {iter_id + 1}/{len(train_loader)}], loss: {avg_loss:.3f}'
                 )
                 train_loss = 0
 
@@ -72,7 +74,7 @@ if __name__ == '__main__':
     print(f'[test accuracy] {accuracy:.3f}%')
     matrix = compute_confusion_matrix(model, test_loader, args.num_classes)
     np.save(os.path.join(args.save_path, f'confusion_matrix_test.npy'), matrix)
-    writer.add_scalar('test accuracy', accuracy, args.epoch * len(train_loader))
+    writer.add_scalar('test accuracy', accuracy, args.epochs * len(train_loader))
     writer.flush()
     writer.close()
 

@@ -16,9 +16,9 @@ def build_cinic_10_dataloader(data_path, batch_size):
     valid_set = datasets.ImageFolder(root=os.path.join(data_path, 'valid'), transform=transform)
     test_set = datasets.ImageFolder(root=os.path.join(data_path, 'test'), transform=transform)
 
-    train_loader = DataLoader(dataset=train_set, batch_size=batch_size, shuffle=True, num_workers=4)
-    valid_loader = DataLoader(dataset=valid_set, batch_size=batch_size, shuffle=False, num_workers=4)
-    test_loader = DataLoader(dataset=test_set, batch_size=batch_size, shuffle=False, num_workers=4)
+    train_loader = DataLoader(dataset=train_set, batch_size=batch_size, shuffle=True, num_workers=1, pin_memory=True)
+    valid_loader = DataLoader(dataset=valid_set, batch_size=batch_size, shuffle=False, num_workers=1, pin_memory=True)
+    test_loader = DataLoader(dataset=test_set, batch_size=batch_size, shuffle=False, num_workers=1, pin_memory=True)
     return train_loader, valid_loader, test_loader
 
 
