@@ -1,4 +1,6 @@
 import os
+from tqdm import tqdm
+from collections import defaultdict
 
 import torch
 from sklearn.metrics import confusion_matrix
@@ -36,6 +38,25 @@ def compute_accuracy(model, dataloader):
 
     accuracy = correct_count / total_count * 100
     return accuracy
+
+
+def compute_accuracy_per_class(model, dataloader):
+    model.eval()
+    with torch.no_grad():
+        correct_count = defaultdict(int)
+        total_count = defaultdict(int)
+        for images, labels in tqdm(dataloader):
+            images, labels = images.cuda(), labels.cuda()
+            output = model(images)     
+            predicted = torch.argmax(output, dim=1) 
+            corrects = predicted == labels
+            for i, label in enumerate(labels):
+                label = label.item()
+                correct_count[label] += float(corrects[i])
+                total_count[label] += 1
+
+        accuracy = {label: correct_count[label] / total_count[label] * 100 for label in total_count.keys()}
+        return accuracy
 
 
 def compute_confusion_matrix(model, dataloader, num_classes):
